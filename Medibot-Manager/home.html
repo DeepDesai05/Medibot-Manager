@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical App UI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+        }
+        .profile-info {
+            display: flex;
+            align-items: center;
+        }
+        .profile-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .search-bar {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+            position: relative;
+        }
+        .search-bar input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            padding-right: 45px;
+        }
+        .search-bar button {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            background: none;
+            cursor: pointer;
+            color: #5a67d8;
+            font-size: 18px;
+        }
+        .medical-check {
+            background-color: #5a67d8;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 15px;
+            position: relative;
+        }
+        .medical-check .text-content {
+            flex: 1;
+        }
+        .medical-check img {
+            width: 100px;
+            height: auto;
+            position: absolute;
+            right: 10px;
+            bottom: 0;
+        }
+        @media (max-width: 576px) {
+            .medical-check {
+                flex-direction: column;
+                text-align: center;
+                padding-bottom: 20px;
+            }
+            .medical-check img {
+                position: static;
+                width: 80px;
+                margin-top: 10px;
+            }
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .see-all {
+            color: #5a67d8;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .see-all:hover {
+            text-decoration: underline;
+        }
+        .icon-box {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .icon-box div {
+            text-align: center;
+            width: 80px;
+            padding: 10px;
+            border-radius: 10px;
+            background-color: #ececff;
+        }
+        .icon-box i {
+            font-size: 24px;
+            color: #5a67d8;
+        }
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #5a67d8;
+            padding: 10px;
+            display: flex;
+            justify-content: space-around;
+        }
+        .bottom-nav a {
+            color: white;
+            font-size: 20px;
+            text-align: center;
+        }
+        .bottom-nav a.active {
+            color: #ff4d4d; /* Highlight Home icon in red */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="profile-info">
+                <img src="C:\users\hp\OneDrive\Pictures\Screenshots\Screenshot 2025-02-25 185801.png" alt="Profile">
+                <div>
+                    <p class="mb-0">Good Morning 👋</p>
+                    <h6>Andrew Ainsley</h6>
+                </div>
+            </div>
+            <i class="fa fa-bell"></i>
+        </div>
+
+        <!-- Search Bar with Icon -->
+        <div class="search-bar">
+            <input type="text" placeholder="Search">
+            <button><i class="fa fa-search"></i></button> <!-- Search Button with Icon -->
+        </div>
+
+        <!-- Medical Checks -->
+        <div class="medical-check">
+            <div class="text-content">
+                <h5>Medical Checks!</h5>
+                <p>Check your health condition regularly.</p>
+                <button class="btn btn-light">Check Now</button>
+            </div>
+            <img src="C:\Users\hp\Downloads\beautiful-young-female-doctor-looking-camera-office_1301-7807-removebg-preview-removebg-preview.png" alt="Doctor">
+        </div>
+
+        <!-- Doctor Specialities -->
+        <div class="section-header">
+            <h5>Doctor Speciality</h5>
+            <a href="#" class="see-all">See All</a>
+        </div>
+        <div class="icon-box">
+            <div><i class="fa fa-user-md"></i><br>General</div>
+            <div><i class="fa fa-tooth"></i><br>Dentist</div>
+            <div><i class="fa fa-eye"></i><br>Ophthalmologist</div>
+            <div><i class="fa fa-carrot"></i><br>Nutritionist</div>
+            <div><i class="fa fa-brain"></i><br>Neurologist</div>
+            <div><i class="fa fa-baby"></i><br>Pediatrician</div>
+            <div><i class="fa fa-x-ray"></i><br>Radiologist</div>
+            <div><i class="fa fa-ellipsis-h"></i><br>More</div>
+        </div>
+
+        <!-- Top Doctors -->
+        <div class="section-header">
+            <h5>Top Doctors</h5>
+            <a href="#" class="see-all">See All</a>
+        </div>
+        <div class="d-flex gap-2">
+            <button class="btn btn-outline-primary">All</button>
+            <button class="btn btn-outline-secondary">General</button>
+            <button class="btn btn-outline-secondary">Dentist</button>
+            <button class="btn btn-outline-secondary">Nutritionist</button>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <a href="#" class="active"><i class="fa fa-house"></i></a>
+        <a href="#"><i class="fa fa-comment-dots"></i></a>
+        <a href="#"><i class="fa fa-user"></i></a>
+        <a href="#"><i class="fa fa-folder-open"></i></a>
+        <a href="#"><i class="fa fa-calendar-alt"></i></a>
+    </div>
+
+</body>
+</html>
+
