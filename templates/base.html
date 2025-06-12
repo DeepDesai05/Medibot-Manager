@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Hospital Management System{% endblock %}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #f8f9fa;
+    }
+    
+    .hospital-header {
+      background: #6a11cb;
+      color: white;
+      padding: 1rem 0;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+    .sidebar {
+      background: #343a40;
+      color: white;
+      min-height: 100vh;
+    }
+    .sidebar .nav-link {
+      color: rgba(255, 255, 255, 0.8);
+      padding: 0.75rem 1rem;
+      border-radius: 0rem;
+      margin-bottom: 0.25rem;
+    }
+    .sidebar .nav-link:hover, .sidebar .nav-link.active {
+      background: #6a11cb;
+      color: white;
+    }
+    .sidebar .nav-link i {
+      margin-right: 0.5rem;
+    }
+    .main-content {
+      padding: 2rem;
+    }
+    /* Square cards for profile, OTP, appointments */
+    .square-card {
+      border-radius: 0.5rem;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      margin-bottom: 1.5rem;
+      height: 300px; /* Fixed height for square appearance */
+      display: flex;
+      flex-direction: column;
+    }
+    .square-card .card-body {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .square-card-header {
+      background: #6a11cb;
+      color: white;
+      border-radius: 0.5rem 0.5rem 0 0 !important;
+      padding: 1rem;
+    }
+    /* Square buttons */
+    .btn-square {
+      border-radius: 0.25rem;
+      padding: 0.75rem;
+      min-width: 100px;
+      height: 100px;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 0.5rem;
+    }
+    .btn-square i {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .btn-hospital {
+      background: #6a11cb;
+      color: white;
+    }
+    .btn-hospital:hover {
+      background: #4d0b9a;
+      color: white;
+    }
+    .table th {
+      background: #f8f9fa;
+    }
+    .health-metric-card {
+      border-left: 4px solid #6a11cb;
+    }
+    .bp-high {
+      color: #dc3545;
+    }
+    .bp-normal {
+      color: #28a745;
+    }
+    .bp-low {
+      color: #17a2b8;
+    }
+    /* Square form elements */
+    .square-form-group {
+      margin-bottom: 1.5rem;
+    }
+    .square-form-control {
+      border-radius: 0.25rem;
+      padding: 0.75rem;
+    }
+    /* OTP square boxes */
+    .otp-square {
+      width: 50px;
+      height: 50px;
+      text-align: center;
+      font-size: 1.5rem;
+      margin: 0 0.5rem;
+      border-radius: 0.25rem;
+      border: 1px solid #ced4da;
+    }
+    /* Appointment slots as squares */
+    .appointment-slot {
+      width: 120px;
+      height: 120px;
+      border: 1px solid #dee2e6;
+      border-radius: 0.25rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 0.5rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .appointment-slot:hover {
+      background-color: #f8f9fa;
+      border-color: #6a11cb;
+    }
+    .appointment-slot.selected {
+      background-color: #6a11cb;
+      color: white;
+      border-color: #6a11cb;
+    }
+  </style>
+</head>
+<body>
+  <div class="hospital-header">
+    Hospital Management System
+  </div>
+
+  <div class="container-fluid">
+    <div class="row">
+      <!-- Sidebar -->
+      <div class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+        <div class="position-sticky pt-3">
+          <ul class="nav flex-column">
+            {% if session.user_type == 'doctor' %}
+              <li class="nav-item">
+                <a class="nav-link {% if request.path == url_for('doctor_dashboard') %}active{% endif %}" href="{{ url_for('doctor_dashboard') }}">
+                  <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {% if request.path == url_for('doctor_patients') %}active{% endif %}" href="{{ url_for('doctor_patients') }}">
+                  <i class="fas fa-users"></i> Patients
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {% if request.path == url_for('doctor_appointments') %}active{% endif %}" href="{{ url_for('doctor_appointments') }}">
+                  <i class="fas fa-calendar-check"></i> Appointments
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {% if request.path == url_for('doctor_profile') %}active{% endif %}" href="{{ url_for('doctor_profile') }}">
+                  <i class="fas fa-user-md"></i> Profile
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {% if request.path == url_for('doctor_notifications') %}active{% endif %}" href="{{ url_for('doctor_notifications') }}">
+                  <i class="fas fa-bell"></i> Notifications
+                </a>
+              </li>
+            {% else %}
+              <li class="nav-item">
+                <a class="nav-link {% if request.path == url_for('patient_dashboard') %}active{% endif %}" href="{{ url_for('patient_dashboard') }}">
+                  <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {% if request.path == url_for('patient_profile') %}active{% endif %}" href="{{ url_for('patient_profile') }}">
+                  <i class="fas fa-user"></i> Profile
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {% if request.path == url_for('patient_appointments') %}active{% endif %}" href="{{ url_for('patient_appointments') }}">
+                  <i class="fas fa-calendar-check"></i> Appointments
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {% if request.path == url_for('patient_reports') %}active{% endif %}" href="{{ url_for('patient_reports') }}">
+                  <i class="fas fa-file-medical"></i> Reports
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {% if request.path == url_for('patient_bills') %}active{% endif %}" href="{{ url_for('patient_bills') }}">
+                  <i class="fas fa-file-invoice-dollar"></i> Bills
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {% if request.path == url_for('patient_doctors') %}active{% endif %}" href="{{ url_for('patient_doctors') }}">
+                  <i class="fas fa-user-md"></i> Doctors
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {% if request.path == url_for('patient_health_metrics') %}active{% endif %}" href="{{ url_for('patient_health_metrics') }}">
+                  <i class="fas fa-heartbeat"></i> Health Meter
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {% if request.path == url_for('patient_feedback') %}active{% endif %}" href="{{ url_for('patient_feedback') }}">
+                  <i class="fas fa-comment-medical"></i> Feedback
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {% if request.path == url_for('patient_attachments') %}active{% endif %}" href="{{ url_for('patient_attachments') }}">
+                  <i class="fas fa-paperclip"></i> Attachments
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {% if request.path == url_for('patient_notifications') %}active{% endif %}" href="{{ url_for('patient_notifications') }}">
+                  <i class="fas fa-bell"></i> Notifications
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link {% if request.path == url_for('patient_video_call') %}active{% endif %}" href="{{ url_for('patient_video_call') }}">
+                  <i class="fas fa-video"></i> Video Call
+                </a>
+              </li>
+            {% endif %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('logout') }}">
+                <i class="fas fa-sign-out-alt"></i> Logout
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Main content -->
+      <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

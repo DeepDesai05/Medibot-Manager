@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video Consultation</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <style>
+    /* Same base styles as dashboard */
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #ffffff;
+      color: #333;
+      font-size: 0.85rem;
+    }
+
+    .hospital-header {
+      text-align: center;
+      padding: 0.5rem 0;
+      font-size: 1.5rem;
+      font-weight: 600;
+      background: #6a11cb;
+      color: white;
+    }
+
+    .container {
+      max-width: 100%;
+      padding: 0.5rem;
+    }
+
+    .greeting {
+      background: #e9ecef;
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+
+    .page-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      text-align: center;
+      color: #6a11cb;
+      margin-bottom: 0.8rem;
+    }
+
+    .consult-card {
+      background: white;
+      padding: 0.7rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      margin-bottom: 0.8rem;
+    }
+
+    .patient-name {
+      font-weight: 600;
+      color: #6a11cb;
+      font-size: 1.1rem;
+    }
+
+    .consult-detail {
+      font-size: 0.8rem;
+      color: #666;
+    }
+
+    .video-container {
+      width: 100%;
+      height: 200px;
+      background: #333;
+      border-radius: 0.5rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      position: relative;
+    }
+
+    .video-placeholder {
+      text-align: center;
+    }
+
+    .video-placeholder i {
+      font-size: 3rem;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .control-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+    }
+
+    .btn-end-call {
+      background-color: #ff416c;
+      color: white;
+    }
+
+    .btn-mute {
+      background-color: #6a11cb;
+      color: white;
+    }
+
+    .btn-video {
+      background-color: #6a11cb;
+      color: white;
+    }
+
+    .btn-hospital {
+      background-color: #6a11cb;
+      color: white;
+      padding: 0.3rem 0.6rem;
+      font-size: 0.75rem;
+      border-radius: 0.3rem;
+    }
+
+    .scroll-container {
+      height: 90vh;
+      overflow-y: auto;
+    }
+
+    .footer {
+      font-size: 0.7rem;
+      padding: 0.5rem 0;
+      background: #6a11cb;
+      color: white;
+      text-align: center;
+    }
+
+    .timer {
+      position: absolute;
+      top: 0.5rem;
+      left: 0.5rem;
+      background: rgba(0,0,0,0.5);
+      padding: 0.2rem 0.5rem;
+      border-radius: 0.3rem;
+      color: white;
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="hospital-header">Video Consultation</div>
+
+  <div class="container scroll-container">
+    <div class="greeting">
+      <strong>Hello, Dr. {{ session.user_name }}</strong>
+      <a href="{{ url_for('scheduled_appointments') }}" class="float-end btn btn-hospital btn-sm">
+        <i class="fas fa-arrow-left"></i> Back to Appointments
+      </a>
+    </div>
+
+    <div class="page-title">Consultation with Patient</div>
+
+    <div class="consult-card">
+      <div class="patient-name">John Doe</div>
+      <div class="consult-detail mb-2">
+        <div><i class="fas fa-clock"></i> 10:00 AM - 10:30 AM (Today)</div>
+        <div><i class="fas fa-stethoscope"></i> General Checkup</div>
+      </div>
+    </div>
+
+    <div class="consult-card">
+      <div class="video-container">
+        <div class="timer">00:05:23</div>
+        <div class="video-placeholder">
+          <i class="fas fa-user-md"></i>
+          <div>Consultation in progress</div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button class="control-btn btn-mute">
+          <i class="fas fa-microphone"></i>
+        </button>
+        <button class="control-btn btn-video">
+          <i class="fas fa-video"></i>
+        </button>
+        <button class="control-btn btn-end-call">
+          <i class="fas fa-phone-slash"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="consult-card">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <div class="patient-name">Consultation Notes</div>
+        <button class="btn btn-hospital btn-sm">
+          <i class="fas fa-save"></i> Save
+        </button>
+      </div>
+      <textarea class="form-control" rows="3" placeholder="Enter consultation notes here..."></textarea>
+    </div>
+
+    <div class="consult-card">
+      <div class="patient-name">Quick Actions</div>
+      <div class="row mt-2">
+        <div class="col-6">
+          <button class="btn btn-hospital w-100 mb-2">
+            <i class="fas fa-file-prescription"></i> Prescription
+          </button>
+        </div>
+        <div class="col-6">
+          <button class="btn btn-hospital w-100 mb-2">
+            <i class="fas fa-file-medical"></i> Test Order
+          </button>
+        </div>
+        <div class="col-6">
+          <button class="btn btn-hospital w-100">
+            <i class="fas fa-calendar-plus"></i> Follow-up
+          </button>
+        </div>
+        <div class="col-6">
+          <button class="btn btn-hospital w-100">
+            <i class="fas fa-file-medical-alt"></i> Add to Records
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3"><h5>About Us</h5></div>
+        <div class="col-md-3"><h5>Find A Doctor</h5></div>
+        <div class="col-md-3"><h5>Department</h5></div>
+        <div class="col-md-3"><h5>Contact Us</h5></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Simple timer functionality
+    let seconds = 0;
+    const timerElement = document.querySelector('.timer');
+    
+    setInterval(() => {
+      seconds++;
+      const hours = Math.floor(seconds / 3600).toString().padStart(2, '0');
+      const mins = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
+      const secs = (seconds % 60).toString().padStart(2, '0');
+      timerElement.textContent = `${hours}:${mins}:${secs}`;
+    }, 1000);
+  </script>
+</body>
+</html>

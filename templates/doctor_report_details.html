@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+  <h1 class="h2">Medical Report</h1>
+  <div class="btn-toolbar mb-2 mb-md-0">
+    <div class="btn-group me-2">
+      <a href="#" class="btn btn-sm btn-outline-secondary">Print</a>
+    </div>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <h5><i class="fas fa-file-medical"></i> Report Details</h5>
+  </div>
+  <div class="card-body">
+    <div class="row mb-4">
+      <div class="col-md-6">
+        <p><strong>Patient Name:</strong> {{ report.patient_name }}</p>
+        <p><strong>Appointment Date:</strong> {{ report.appointment_date.strftime('%d %b %Y') }}</p>
+        <p><strong>Appointment Time:</strong> {{ report.appointment_time.strftime('%I:%M %p') }}</p>
+      </div>
+      <div class="col-md-6">
+        <p><strong>Report Date:</strong> {{ report.report_date.strftime('%d %b %Y') }}</p>
+      </div>
+    </div>
+    
+    <div class="mb-4">
+      <h5>Diagnosis</h5>
+      <div class="p-3 bg-light rounded">
+        {{ report.diagnosis }}
+      </div>
+    </div>
+    
+    <div class="mb-4">
+      <h5>Prescription</h5>
+      <div class="p-3 bg-light rounded">
+        {{ report.prescription }}
+      </div>
+    </div>
+    
+    {% if report.notes %}
+    <div class="mb-4">
+      <h5>Notes</h5>
+      <div class="p-3 bg-light rounded">
+        {{ report.notes }}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

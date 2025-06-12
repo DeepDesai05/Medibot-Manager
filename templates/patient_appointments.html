@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+  /* Container styling */
+  .appointment-container {
+    max-width: 700px;
+    margin: 30px auto;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #2c3e50;
+  }
+  
+  /* Form styling */
+  form {
+    background: #f9f9f9;
+    padding: 20px 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
+    margin-bottom: 40px;
+  }
+  
+  form div {
+    margin-bottom: 15px;
+  }
+  
+  label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #34495e;
+  }
+  
+  select, input[type="date"], textarea {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1.5px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+  }
+  
+  select:focus, input[type="date"]:focus, textarea:focus {
+    border-color: #3498db;
+    outline: none;
+  }
+  
+  textarea {
+    resize: vertical;
+  }
+  
+  button[type="submit"] {
+    background-color: #3498db;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  button[type="submit"]:hover {
+    background-color: #2980b9;
+  }
+  
+  /* Table styling */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 1rem;
+  }
+  
+  thead {
+    background-color: #3498db;
+    color: white;
+  }
+  
+  th, td {
+    text-align: left;
+    padding: 12px 15px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  tbody tr:hover {
+    background-color: #f1f8ff;
+  }
+  
+  tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  /* No appointments row */
+  .no-appointments {
+    text-align: center;
+    font-style: italic;
+    color: #777;
+  }
+</style>
+
+<div class="appointment-container">
+  <h2>My Appointments</h2>
+
+  <!-- Appointment booking form -->
+  <form method="POST" action="{{ url_for('patient_appointments') }}">
+      <div>
+          <label for="doctor_id">Select Doctor:</label>
+          <select name="doctor_id" id="doctor_id" required>
+              <option value="">-- Select Doctor --</option>
+              {% for doctor in doctors %}
+              <option value="{{ doctor.id }}">{{ doctor.name }} ({{ doctor.specialization }})</option>
+              {% endfor %}
+          </select>
+      </div>
+      
+      <div>
+          <label for="appointment_date">Date:</label>
+          <input type="date" name="appointment_date" id="appointment_date" 
+                 min="{{ min_date }}" value="{{ today }}" required>
+      </div>
+      
+      <div>
+          <label for="appointment_time">Time:</label>
+          <select name="appointment_time" id="appointment_time" required>
+              <option value="">-- Select Time --</option>
+              {% for slot in time_slots %}
+              <option value="{{ slot }}">{{ slot }}</option>
+              {% endfor %}
+          </select>
+      </div>
+      
+      <div>
+          <label for="reason">Reason:</label>
+          <textarea name="reason" id="reason" rows="3" required></textarea>
+      </div>
+      
+      <button type="submit">Book Appointment</button>
+  </form>
+
+  <!-- Display existing appointments -->
+  <table>
+      <thead>
+          <tr>
+              <th>Doctor</th>
+              <th>Specialization</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Reason</th>
+          </tr>
+      </thead>
+      <tbody>
+          {% for appointment in appointments %}
+          <tr>
+              <td>{{ appointment.doctor_name }}</td>
+              <td>{{ appointment.specialization }}</td>
+              <td>{{ appointment.formatted_date }}</td>
+              <td>{{ appointment.formatted_time }}</td>
+              <td>{{ appointment.reason }}</td>
+          </tr>
+          {% else %}
+          <tr>
+              <td colspan="5" class="no-appointments">No appointments found.</td>
+          </tr>
+          {% endfor %}
+      </tbody>
+  </table>
+</div>
+{% endblock %}

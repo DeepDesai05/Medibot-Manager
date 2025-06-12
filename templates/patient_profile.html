@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+  <h1 class="h2">Profile</h1>
+</div>
+
+<div class="row">
+  <div class="col-md-8">
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5><i class="fas fa-user"></i> Edit Profile</h5>
+      </div>
+      <div class="card-body">
+        <form method="POST" action="{{ url_for('patient_profile') }}">
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label for="name" class="form-label">Full Name</label>
+              <input type="text" class="form-control" id="name" name="name" value="{{ patient.name }}" required>
+            </div>
+            <div class="col-md-6">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" class="form-control" id="email" name="email" value="{{ patient.email }}" required>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label for="phone" class="form-label">Phone</label>
+              <input type="tel" class="form-control" id="phone" name="phone" value="{{ patient.phone }}" required>
+            </div>
+            <div class="col-md-6">
+              <label for="dob" class="form-label">Date of Birth</label>
+              <input type="date" class="form-control" id="dob" name="dob" value="{{ patient.dob }}" required>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label for="gender" class="form-label">Gender</label>
+              <select class="form-select" id="gender" name="gender" required>
+                <option value="Male" {% if patient.gender == 'Male' %}selected{% endif %}>Male</option>
+                <option value="Female" {% if patient.gender == 'Female' %}selected{% endif %}>Female</option>
+                <option value="Other" {% if patient.gender == 'Other' %}selected{% endif %}>Other</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label for="blood_group" class="form-label">Blood Group</label>
+              <select class="form-select" id="blood_group" name="blood_group">
+                <option value="">Select</option>
+                <option value="A+" {% if patient.blood_group == 'A+' %}selected{% endif %}>A+</option>
+                <option value="A-" {% if patient.blood_group == 'A-' %}selected{% endif %}>A-</option>
+                <option value="B+" {% if patient.blood_group == 'B+' %}selected{% endif %}>B+</option>
+                <option value="B-" {% if patient.blood_group == 'B-' %}selected{% endif %}>B-</option>
+                <option value="AB+" {% if patient.blood_group == 'AB+' %}selected{% endif %}>AB+</option>
+                <option value="AB-" {% if patient.blood_group == 'AB-' %}selected{% endif %}>AB-</option>
+                <option value="O+" {% if patient.blood_group == 'O+' %}selected{% endif %}>O+</option>
+                <option value="O-" {% if patient.blood_group == 'O-' %}selected{% endif %}>O-</option>
+              </select>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="address" class="form-label">Address</label>
+            <textarea class="form-control" id="address" name="address" rows="3" required>{{ patient.address }}</textarea>
+          </div>
+          <button type="submit" class="btn btn-hospital">Update Profile</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-header">
+        <h5><i class="fas fa-info-circle"></i> Profile Information</h5>
+      </div>
+      <div class="card-body">
+        <div class="text-center mb-3">
+          <img src="https://via.placeholder.com/150" class="rounded-circle" alt="Profile Image">
+        </div>
+        <h5 class="text-center">{{ patient.name }}</h5>
+        <hr>
+        <p><strong>Email:</strong> {{ patient.email }}</p>
+        <p><strong>Phone:</strong> {{ patient.phone }}</p>
+        <p><strong>Date of Birth:</strong> {{ patient.dob.strftime('%d %b %Y') }}</p>
+        <p><strong>Gender:</strong> {{ patient.gender }}</p>
+        {% if patient.blood_group %}
+          <p><strong>Blood Group:</strong> {{ patient.blood_group }}</p>
+        {% endif %}
+        <p><strong>Address:</strong> {{ patient.address }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

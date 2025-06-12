@@ -1,0 +1,301 @@
+{% extends "base.html" %}
+
+{% block navigation %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{{ url_for('doctor_dashboard') }}">
+            <i class="fas fa-user-md me-2"></i>Doctor Portal
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'doctor_dashboard' %}active{% endif %}" href="{{ url_for('doctor_dashboard') }}">
+                        <i class="fas fa-tachometer-alt me-1"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'doctor_appointments' %}active{% endif %}" href="{{ url_for('doctor_appointments') }}">
+                        <i class="fas fa-calendar-check me-1"></i> Appointments
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'doctor_reports' %}active{% endif %}" href="{{ url_for('doctor_reports') }}">
+                        <i class="fas fa-file-medical me-1"></i> Patient Reports
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if request.endpoint == 'doctor_patients' %}active{% endif %}" href="{{ url_for('doctor_patients') }}">
+                        <i class="fas fa-users me-1"></i> Patients
+                    </a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user-circle me-1"></i> {{ session['user_name'] }}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="{{ url_for('doctor_profile') }}">Profile</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('doctor_notifications') }}">Notifications</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{{ url_for('logout') }}">Logout</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <div class="btn-group me-2">
+                <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-primary" aria-label="Refresh Dashboard" onclick="window.location.reload()">
+                <i class="fas fa-sync-alt me-1"></i> Refresh
+            </button>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        {% set stats = [
+            {'title': 'Total Patients', 'value': total_patients, 'icon': 'users', 'color': 'primary'},
+            {'title': "Today's Appointments", 'value': today_appointments, 'icon': 'calendar-check', 'color': 'success'},
+            {'title': 'Pending Reports', 'value': reports|length, 'icon': 'file-medical', 'color': 'info'},
+            {'title': 'Notifications', 'value': unread_notifications, 'icon': 'bell', 'color': 'warning'},
+        ] %}
+        {% for stat in stats %}
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-start-{{ stat.color }} shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col me-2">
+                            <div class="text-xs fw-bold text-{{ stat.color }} text-uppercase mb-1">
+                                {{ stat.title }}
+                            </div>
+                            <div class="h5 mb-0 fw-bold text-gray-800">{{ stat.value }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-{{ stat.icon }} fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Main Content Row -->
+    <div class="row">
+        <!-- Appointments Section -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 fw-bold text-primary">
+                        <i class="fas fa-calendar-alt me-1"></i> Upcoming Appointments
+                    </h6>
+                    <div class="dropdown no-arrow">
+                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="dropdownMenuLink">
+                            <li><a class="dropdown-item" href="{{ url_for('doctor_appointments') }}">View All</a></li>
+                            <li><a class="dropdown-item" href="#">Print List</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% if appointments %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th scope="col">Patient</th>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Time</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for appointment in appointments %}
+                                <tr>
+                                    <td>
+                                        <a href="{{ url_for('doctor_patient_details', patient_id=appointment.patient_id) }}">
+                                            {{ appointment.patient_name }}
+                                        </a>
+                                    </td>
+                                    <td>{{ appointment.appointment_date.strftime('%d %b %Y') }}</td>
+                                    <td>{{ appointment.appointment_time.strftime('%I:%M %p') }}</td>
+                                    <td>
+                                        <a href="{{ url_for('doctor_appointment_details', appointment_id=appointment.id) }}" 
+                                           class="btn btn-sm btn-outline-primary" aria-label="View Appointment Details">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-calendar-times fa-3x text-gray-300 mb-3"></i>
+                        <h5 class="text-gray-500">No upcoming appointments</h5>
+                        <p class="text-muted">You have no scheduled appointments for today</p>
+                        <a href="{{ url_for('doctor_appointments') }}" class="btn btn-primary mt-2">
+                            <i class="fas fa-calendar-plus me-1"></i> View All Appointments
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Patient Reports Section -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 fw-bold text-primary">
+                        <i class="fas fa-file-medical me-1"></i> Recent Patient Reports
+                    </h6>
+                    <div class="dropdown no-arrow">
+                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="dropdownMenuLink">
+                            <li><a class="dropdown-item" href="{{ url_for('doctor_reports') }}">View All</a></li>
+                            <li><a class="dropdown-item" href="#">Upload New</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="card-body">
+                    {% if reports %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th scope="col">Patient</th>
+                                    <th scope="col">Report Type</th>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for report in reports %}
+                                <tr>
+                                    <td>
+                                        <a href="{{ url_for('doctor_patient_details', patient_id=report.patient_id) }}">
+                                            {{ report.patient_name }}
+                                        </a>
+                                    </td>
+                                    <td>{{ report.report_type }}</td>
+                                    <td>{{ report.upload_date.strftime('%d %b %Y') }}</td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="{{ url_for('view_report', report_id=report.id) }}" 
+                                               class="btn btn-sm btn-outline-primary" 
+                                               data-bs-toggle="tooltip" 
+                                               title="View Report">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <a href="{{ url_for('download_report', report_id=report.id) }}" 
+                                               class="btn btn-sm btn-outline-success"
+                                               data-bs-toggle="tooltip"
+                                               title="Download Report">
+                                                <i class="fas fa-download"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-file-medical-alt fa-3x text-gray-300 mb-3"></i>
+                        <h5 class="text-gray-500">No recent reports</h5>
+                        <p class="text-muted">No patient reports have been uploaded recently</p>
+                        <a href="{{ url_for('doctor_reports') }}" class="btn btn-primary mt-2">
+                            <i class="fas fa-file-upload me-1"></i> View All Reports
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity Section -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 fw-bold text-primary">
+                        <i class="fas fa-bell me-1"></i> Recent Notifications
+                    </h6>
+                    <span class="badge bg-primary rounded-pill">{{ unread_notifications }}</span>
+                </div>
+                <div class="card-body">
+                    <div class="list-group list-group-flush">
+                        {% if recent_notifications %}
+                            {% for notification in recent_notifications %}
+                            <a href="#" class="list-group-item list-group-item-action" aria-label="{{ notification.title }}">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">{{ notification.title }}</h6>
+                                    <small>{{ notification.time_ago }}</small>
+                                </div>
+                                <p class="mb-1">{{ notification.message | truncate(50) }}</p>
+                                <small class="text-muted">{{ notification.created_at.strftime('%d %b %I:%M %p') }}</small>
+                            </a>
+                            {% endfor %}
+                        {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-bell-slash fa-3x text-gray-300 mb-3"></i>
+                            <h5 class="text-gray-500">No notifications</h5>
+                            <p class="text-muted">You have no recent notifications</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="text-center mt-3">
+                        <a href="{{ url_for('doctor_notifications') }}" class="btn btn-sm btn-outline-primary">
+                            View All Notifications
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Refresh dashboard every 60 seconds
+    setTimeout(() => {
+        window.location.reload();
+    }, 60000);
+
+    // Initialize Bootstrap tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.forEach(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+    
+    // Make refresh button work
+    document.querySelector('.btn-outline-primary[aria-label="Refresh Dashboard"]').addEventListener('click', function() {
+        window.location.reload();
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Upload Medical Report</h2>
+  <form method="POST" enctype="multipart/form-data">
+    <div class="mb-3">
+      <label for="doctor_id" class="form-label">Select Doctor</label>
+      <select class="form-select" id="doctor_id" name="doctor_id" required>
+        <option value="">-- Select Doctor --</option>
+        {% for doctor in doctors %}
+        <option value="{{ doctor.id }}">{{ doctor.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label for="report_type" class="form-label">Report Type</label>
+      <input type="text" class="form-control" id="report_type" name="report_type" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="report_file" class="form-label">Upload Report File</label>
+      <input type="file" class="form-control" id="report_file" name="report_file" required>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Upload</button>
+    <a href="{{ url_for('patient_reports') }}" class="btn btn-secondary">Cancel</a>
+  </form>
+</div>
+{% endblock %}

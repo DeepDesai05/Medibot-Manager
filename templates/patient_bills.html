@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+  <h1 class="h2">Bills</h1>
+</div>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <h5><i class="fas fa-file-invoice-dollar"></i> My Bills</h5>
+  </div>
+  <div class="card-body">
+    {% if bills %}
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Issue Date</th>
+              <th>Due Date</th>
+              <th>Doctor</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for bill in bills %}
+              <tr>
+                <td>{{ bill.issue_date.strftime('%d %b %Y') }}</td>
+                <td>{{ bill.due_date.strftime('%d %b %Y') }}</td>
+                <td>{{ bill.doctor_name }}</td>
+                <td>${{ "%.2f"|format(bill.amount) }}</td>
+                <td>
+                  <span class="badge bg-{% if bill.status == 'Paid' %}success{% else %}danger{% endif %}">
+                    {{ bill.status }}
+                  </span>
+                </td>
+                <td>
+                  <a href="#" class="btn btn-sm btn-hospital">
+                    <i class="fas fa-eye"></i> View
+                  </a>
+                  {% if bill.status == 'Unpaid' %}
+                    <a href="#" class="btn btn-sm btn-success">
+                      <i class="fas fa-credit-card"></i> Pay
+                    </a>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p class="text-center text-muted">No bills found</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

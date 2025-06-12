@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+  <h1 class="h2">Doctors</h1>
+</div>
+
+<div class="row">
+  {% for doctor in doctors %}
+    <div class="col-md-4 mb-4">
+      <div class="card h-100">
+        <div class="card-body text-center">
+          <img src="https://via.placeholder.com/100" class="rounded-circle mb-3" alt="Doctor Image">
+          <h5 class="card-title">{{ doctor.name }}</h5>
+          <p class="text-muted">{{ doctor.specialization }}</p>
+          <p><small class="text-muted">{{ doctor.experience }} years experience</small></p>
+          {% if doctor.bio %}
+            <p class="card-text">{{ doctor.bio[:100] }}{% if doctor.bio|length > 100 %}...{% endif %}</p>
+          {% endif %}
+          <a href="{{ url_for('patient_appointments') }}?doctor_id={{ doctor.id }}" class="btn btn-sm btn-hospital">
+            <i class="fas fa-calendar-check"></i> Book Appointment
+          </a>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}

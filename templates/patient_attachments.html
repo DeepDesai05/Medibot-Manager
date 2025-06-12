@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+  <h1 class="h2">Attachments</h1>
+  <div class="btn-toolbar mb-2 mb-md-0">
+    <button class="btn btn-hospital me-2" data-bs-toggle="modal" data-bs-target="#uploadFileModal">
+      <i class="fas fa-upload"></i> Upload File
+    </button>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <h5><i class="fas fa-paperclip"></i> My Documents</h5>
+  </div>
+  <div class="card-body">
+    {% if attachments %}
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>File Name</th>
+              <th>Description</th>
+              <th>Upload Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for attachment in attachments %}
+              <tr>
+                <td>{{ attachment.file_name }}</td>
+                <td>{{ attachment.description or 'N/A' }}</td>
+                <td>{{ attachment.upload_date.strftime('%d %b %Y') }}</td>
+                <td>
+                  <a href="{{ url_for('static', filename='uploads/' + attachment.file_name) }}" class="btn btn-sm btn-hospital" download>
+                    <i class="fas fa-download"></i> Download
+                  </a>
+                  <a href="#" class="btn btn-sm btn-outline-danger">
+                    <i class="fas fa-trash"></i> Delete
+                  </a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p class="text-center text-muted">No attachments found</p>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Upload File Modal -->
+<div class="modal fade" id="uploadFileModal" tabindex="-1" aria-labelledby="uploadFileModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="uploadFileModalLabel">Upload File</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="POST" action="{{ url_for('patient_attachments') }}" enctype="multipart/form-data">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="file" class="form-label">Select File</label>
+            <input class="form-control" type="file" id="file" name="file" required>
+          </div>
+          <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-hospital">Upload</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

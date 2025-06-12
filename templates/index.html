@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Medibot Manager</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(to right, #2d0b57, #5e0e95);
+      color: white;
+      padding: 40px;
+    }
+
+    header h2 {
+      color: white;
+      font-size: 1.6rem;
+      margin-bottom: 40px;
+    }
+
+    .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 50px;
+    }
+
+    .text-section {
+      max-width: 50%;
+    }
+
+    .text-section h1 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+    }
+
+    .text-section p {
+      font-size: 1.2rem;
+      margin-bottom: 30px;
+      color: #d6d6e7;
+    }
+
+    .text-section .get-started {
+      background: linear-gradient(to right, #00f0ff, #d000ff);
+      color: white;
+      border: none;
+      padding: 12px 28px;
+      font-size: 1rem;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.3s;
+      text-decoration: none;   /* Important for <a> */
+      display: inline-block;   /* Important for <a> */
+    }
+
+    .text-section .get-started:hover {
+      opacity: 0.9;
+      text-decoration: none;   /* Remove underline on hover */
+    }
+
+    .image-section img {
+      width: 400px;
+      border-radius: 20px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h2>MEDIBOT <span style="font-weight: 400;">MANAGER</span></h2>
+  </header>
+
+  <main class="container">
+    <div class="text-section">
+      <h1>Smart Hospital<br>Management</h1>
+      <p>Streamline appointments, records, and patient care with AI-powered automation</p>
+      <a href="{{ url_for('login') }}" class="get-started">Get Started</a>
+    </div>
+    <div class="image-section">
+<img src="{{ url_for( filename='WhatsApp Image 2025-05-23 at 10.49.10_9f27d67e.jpg') }}" alt="AI Doctor Image" />
+
+    </div>
+  </main>
+</body>
+</html>

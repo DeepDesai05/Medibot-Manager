@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Select Doctor</h2>
+
+  <form method="POST">
+    <div class="mb-3">
+      <label for="doctor_id" class="form-label">Choose a Doctor</label>
+      <select id="doctor_id" name="doctor_id" class="form-select" required>
+        <option value="">-- Select Doctor --</option>
+        {% for doctor in doctors %}
+        <option value="{{ doctor.id }}">{{ doctor.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Select Doctor</button>
+    <a href="{{ url_for('patient_dashboard') }}" class="btn btn-secondary ms-2">Cancel</a>
+  </form>
+</div>
+{% endblock %}

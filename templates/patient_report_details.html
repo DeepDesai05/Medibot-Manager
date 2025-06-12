@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Report Details</h2>
+    
+    <div class="card">
+        <div class="card-header">
+            <h4>Report from {{ report.formatted_date }}</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Doctor:</strong> {{ report.doctor_name }}</p>
+                    <p><strong>Appointment Date:</strong> {{ report.formatted_appointment_date }}</p>
+                </div>
+            </div>
+            
+            <div class="mt-4">
+                <h5>Diagnosis</h5>
+                <p>{{ report.diagnosis }}</p>
+            </div>
+            
+            {% if report.prescription %}
+            <div class="mt-4">
+                <h5>Prescription</h5>
+                <p>{{ report.prescription }}</p>
+            </div>
+            {% endif %}
+            
+            {% if report.notes %}
+            <div class="mt-4">
+                <h5>Doctor's Notes</h5>
+                <p>{{ report.notes }}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="mt-3">
+        <a href="{{ url_for('patient_reports') }}" class="btn btn-hospital">
+            <i class="fas fa-arrow-left"></i> Back to Reports
+        </a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>My Medical Reports</h2>
+
+  {% if reports %}
+  <div class="list-group">
+    {% for report in reports %}
+    <div class="list-group-item mb-3">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h5>{{ report.report_type }} - Uploaded on {{ report.formatted_date }}</h5>
+          <p><strong>Doctor:</strong> {{ report.doctor_name }}</p>
+        </div>
+        <a href="{{ url_for('static', filename=report.file_path) }}" target="_blank" class="btn btn-sm btn-primary">
+          View / Download
+        </a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="alert alert-info">No medical reports found.</div>
+  {% endif %}
+
+  <div class="mt-4 d-flex justify-content-between">
+    <a href="{{ url_for('patient_dashboard') }}" class="btn btn-secondary">
+      <i class="fas fa-arrow-left"></i> Back to Dashboard
+    </a>
+
+    <a href="{{ url_for('patient_upload_report') }}" class="btn btn-success">
+      <i class="fas fa-upload"></i> Upload New Report
+    </a>
+  </div>
+</div>
+{% endblock %}

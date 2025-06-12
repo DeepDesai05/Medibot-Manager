@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+  <h1 class="h2">Patient Details</h1>
+</div>
+
+<div class="row mb-4">
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-header">
+        <h5><i class="fas fa-user"></i> Basic Information</h5>
+      </div>
+      <div class="card-body">
+        <p><strong>Name:</strong> {{ patient.name }}</p>
+        <p><strong>Email:</strong> {{ patient.email }}</p>
+        <p><strong>Phone:</strong> {{ patient.phone }}</p>
+        <p><strong>Gender:</strong> {{ patient.gender }}</p>
+        <p><strong>DOB:</strong> {{ patient.dob.strftime('%d %b %Y') }}</p>
+        <p><strong>Blood Group:</strong> {{ patient.blood_group or 'N/A' }}</p>
+        <p><strong>Address:</strong> {{ patient.address }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-8">
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5><i class="fas fa-heartbeat"></i> Recent Blood Pressure</h5>
+      </div>
+      <div class="card-body">
+        {% if health_metrics %}
+          <canvas id="bpChart" height="100"></canvas>
+          <div class="table-responsive mt-3">
+            <table class="table table-sm">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Time</th>
+                  <th>BP</th>
+                  <th>Pulse</th>
+                  <th>Temp</th>
+                  <th>Weight</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for metric in health_metrics %}
+                  <tr>
+                    <td>{{ metric.record_date.strftime('%d %b %Y') }}</td>
+                    <td>{{ metric.record_time.strftime('%I:%M %p') }}</td>
+                    <td>
+                      <span class="{% if metric.systolic > 140 or metric.diastolic > 90 %}bp-high{% elif metric.systolic < 90 or metric.diastolic < 60 %}bp-low{% else %}bp-normal{% endif %}">
+                        {{ metric.systolic }}/{{ metric.diastolic }}
+                      </span>
+                    </td>
+                    <td>{{ metric.pulse }}</td>
+                    <td>{{ metric.temperature }}°F</td>
+                    <td>{{ metric.weight }} kg</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <p class="text-center text-muted">No health metrics recorded</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <h5><i class="fas fa-calendar-check"></i> Appointments</h5>
+  </div>
+  <div class="card-body">
+    {% if appointments %}
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Status</th>
+              <th>Reason</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for appointment in appointments %}
+              <tr>
+                <td>{{ appointment.appointment_date.strftime('%d %b %Y') }}</td>
+                <td>{{ appointment.appointment_time.strftime('%I:%M %p') }}</td>
+                <td>
+                  <span class="badge bg-{% if appointment.status == 'Scheduled' %}info{% elif appointment.status == 'Completed' %}success{% else %}danger{% endif %}">
+                    {{ appointment.status }}
+                  </span>
+                </td>
+                <td>{{ appointment.reason }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p class="text-center text-muted">No appointments found</p>
+    {% endif %}
+  </div>
+</div>
+
+<div class="card mb-4">
+  <div class="card-header">
+    <h5><i class="fas fa-file-medical"></i> Medical Reports</h5>
+  </div>
+  <div class="card-body">
+    {% if reports %}
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Diagnosis</th>
+              <th>Prescription</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for report in reports %}
+              <tr>
+                <td>{{ report.report_date.strftime('%d %b %Y') }}</td>
+                <td>{{ report.diagnosis[:50] }}{% if report.diagnosis|length > 50 %}...{% endif %}</td>
+                <td>{{ report.prescription[:50] }}{% if report.prescription|length > 50 %}...{% endif %}</td>
+                <td>
+                  <a href="{{ url_for('doctor_report_details', report_id=report.id) }}" class="btn btn-sm btn-hospital">
+                    <i class="fas fa-eye"></i> View
+                  </a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p class="text-center text-muted">No reports found</p>
+    {% endif %}
+  </div>
+</div>
+
+{% if health_metrics %}
+<script>
+  // BP Chart
+  const bpCtx = document.getElementById('bpChart').getContext('2d');
+  const bpChart = new Chart(bpCtx, {
+    type: 'line',
+    data: {
+      labels: [
+        {% for metric in health_metrics %}
+          '{{ metric.record_date.strftime('%d %b') }} {{ metric.record_time.strftime('%I:%M %p') }}'{% if not loop.last %},{% endif %}
+        {% endfor %}
+      ],
+      datasets: [
+        {
+          label: 'Systolic',
+          data: [
+            {% for metric in health_metrics %}
+              {{ metric.systolic }}{% if not loop.last %},{% endif %}
+            {% endfor %}
+          ],
+          borderColor: '#6a11cb',
+          backgroundColor: 'rgba(106, 17, 203, 0.1)',
+          tension: 0.1
+        },
+        {
+          label: 'Diastolic',
+          data: [
+            {% for metric in health_metrics %}
+              {{ metric.diastolic }}{% if not loop.last %},{% endif %}
+            {% endfor %}
+          ],
+          borderColor: '#ff416c',
+          backgroundColor: 'rgba(255, 65, 108, 0.1)',
+          tension: 0.1
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'top',
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              return context.dataset.label + ': ' + context.raw;
+            }
+          }
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: false,
+          title: {
+            display: true,
+            text: 'mmHg'
+          }
+        }
+      }
+    }
+  });
+</script>
+{% endif %}
+{% endblock %}

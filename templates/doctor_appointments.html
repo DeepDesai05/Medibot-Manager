@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Appointments{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Your Appointments</h2>
+    
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="btn-group" role="group">
+                <a href="{{ url_for('doctor_appointments') }}?status=Scheduled" 
+                   class="btn btn-outline-primary {% if request.args.get('status') == 'Scheduled' %}active{% endif %}">
+                    Scheduled
+                </a>
+                <a href="{{ url_for('doctor_appointments') }}?status=Completed" 
+                   class="btn btn-outline-success {% if request.args.get('status') == 'Completed' %}active{% endif %}">
+                    Completed
+                </a>
+                <a href="{{ url_for('doctor_appointments') }}?status=Cancelled" 
+                   class="btn btn-outline-secondary {% if request.args.get('status') == 'Cancelled' %}active{% endif %}">
+                    Cancelled
+                </a>
+                <a href="{{ url_for('doctor_appointments') }}" 
+                   class="btn btn-outline-dark">
+                    All Appointments
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-body">
+            {% if appointments %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Patient</th>
+                            <th>Reason</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for appt in appointments %}
+                        <tr>
+                            <td>{{ appt.formatted_date }}</td>
+                            <td>{{ appt.formatted_time }}</td>
+                            <td>{{ appt.patient_name }}</td>
+                            <td>{{ appt.reason }}</td>
+                            <td>
+                                <span class="badge 
+                                    {% if appt.status == 'Scheduled' %}bg-primary
+                                    {% elif appt.status == 'Completed' %}bg-success
+                                    {% else %}bg-secondary{% endif %}">
+                                    {{ appt.status }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{{ url_for('doctor_appointment_details', appointment_id=appt.id) }}" 
+                                   class="btn btn-sm btn-outline-primary">
+                                    Details
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info">No appointments found.</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
